@@ -1,0 +1,40 @@
+ ///////docker-compose build --no-cache  --force-rm
+  docker-compose stop
+ docker-compose up -d
+
+docker exec -it laravel-docker bash   ////to go into a container laravel-docker
+composer create-project laravel/laravel .            ////install laravel in the current directory
+
+exit  ////to exit current container
+
+docker exec laravel-docker bash -c "composer update"   ///to update composer in docker
+
+docker exec laravel-docker bash -c "php artisan migrate"
+docker exec laravel-docker bash -c "php artisan db:seed"
+
+docker exec laravel-docker bash -c "php artisan serve"
+
+//Error: Access Forbidden
+//Corrction: Create a .htaccess file in root directory using below 3 lines of code.
+
+RewriteEngine On
+RewriteCond %{REQUEST_URI} !^/public/
+RewriteRule ^(.*)$ /public/$1 [L,QSA]
+/////////////////////////////////////
+then do these:  chmod o+w ./storage/ -R
+this will give others permissions without altering user and group permissions.
+
+You should also give access to the www-data user or group.
+
+  chown www-data:www-data -R ./storage
+
+////////////////////////////
+
+Success!
+
+HINT:
+mysql_db:      ////this is the mysql hostname
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: root   ///passwprd
+      MYSQL_DATABASE: laravel_docker
